@@ -6,7 +6,7 @@ import "./app.css";
 function App() {
   return (
     <div className="app">
-      <h1>Project Timeline</h1>
+      <h1>Airtable timeline</h1>
       <Timeline />
     </div>
   );

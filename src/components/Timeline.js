@@ -8,23 +8,29 @@ import "./Timeline.css";
 const Timeline = () => {
   const [zoom, setZoom] = useState(1);
   const [draggedItem, setDraggedItem] = useState(null);
+  const [items, setItems] = useState(() => [...timelineItems]);
 
   const { lanes, rangeStart, rangeEnd } = useMemo(() => {
-    const lanesAssigned = assignLanes(timelineItems);
+    const lanesAssigned = assignLanes(items);
     const minStart = new Date(
-      Math.min(...timelineItems.map((i) => new Date(i.start).getTime()))
+      Math.min(...items.map((i) => new Date(i.start).getTime()))
     );
     const maxEnd = new Date(
-      Math.max(...timelineItems.map((i) => new Date(i.end).getTime()))
+      Math.max(...items.map((i) => new Date(i.end).getTime()))
     );
     return { lanes: lanesAssigned, rangeStart: minStart, rangeEnd: maxEnd };
-  }, []);
+  }, [items]);
 
   const months = useMemo(() => buildMonthSegements(rangeStart, rangeEnd), [rangeStart, rangeEnd]);
   const totalDays = useMemo(() => calculateTotalDays(rangeStart, rangeEnd), [rangeStart, rangeEnd]);
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.2, 3));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.2, 0.5));
+
+  // updates a single item in state
+  const handleItemUpdt = (itemId, nextFields) => {
+    setItems(curr => curr.map(it => (it.id === itemId ? { ...it, ...nextFields } : it)));
+  };
 
   const handleItemDrag = (itemId, newStart, newEnd) => {
     console.log("Item dragged:", itemId, newStart, newEnd);
@@ -62,6 +68,7 @@ const Timeline = () => {
                   item={item}
                   rangeStart={rangeStart}
                   totalDays={totalDays}
+                  onItemChange={handleItemUpdt}
                   onDrag={handleItemDrag}
                   isDragging={draggedItem === item.id}
                   onDragStart={() => setDraggedItem(item.id)}
