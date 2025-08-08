@@ -45,11 +45,11 @@ const TimelineItem = ({ item, rangeStart, totalDays, onItemChange, onDrag, isDra
     const s = new Date(editStart);
     const e = new Date(editEnd);
     if (!isValidDate(s) || !isValidDate(e)) {
-      alert("Data inválida. Use um formato válido (YYYY-MM-DD).");
+      alert("Invalid Date. Use a valid format (YYYY-MM-DD).");
       return;
     }
     if (e < s) {
-      alert("Intervalo inválido: a data inicial deve ser anterior ou igual à final.");
+      alert("Invalid Date.  The start date must be before or equal to the end date.");
       return;
     }
     onItemChange?.(item.id, { start: editStart, end: editEnd });
