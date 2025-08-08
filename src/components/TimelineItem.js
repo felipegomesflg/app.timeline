@@ -39,11 +39,21 @@ const TimelineItem = ({ item, rangeStart, totalDays, onItemChange, onDrag, isDra
     }
   };
 
+  const isValidDate = (d) => d instanceof Date && !Number.isNaN(d.getTime());
+
   const handleDatesSave = () => {
-    if (new Date(editEnd) >= new Date(editStart)) {
-      onItemChange?.(item.id, { start: editStart, end: editEnd });
-      setIsEditingDates(false);
+    const s = new Date(editStart);
+    const e = new Date(editEnd);
+    if (!isValidDate(s) || !isValidDate(e)) {
+      alert("Data inválida. Use um formato válido (YYYY-MM-DD).");
+      return;
     }
+    if (e < s) {
+      alert("Intervalo inválido: a data inicial deve ser anterior ou igual à final.");
+      return;
+    }
+    onItemChange?.(item.id, { start: editStart, end: editEnd });
+    setIsEditingDates(false);
   };
 
   const handleDateKey = (e) => {
