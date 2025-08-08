@@ -2,16 +2,12 @@ import React, { useState, useRef } from "react";
 import { calculatePosition, calculateWidth } from "../utils/dateUtils";
 import "./TimelineItem.css";
 
-const TimelineItem = ({ item, onDrag, isDragging, onDragStart, onDragEnd }) => {
+const TimelineItem = ({ item, rangeStart, totalDays, onDrag, isDragging, onDragStart, onDragEnd }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(item.name);
   const itemRef = useRef(null);
 
-  const startDate = new Date("2021-01-01");
-  const endDate = new Date("2021-05-31");
-  const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
-  
-  const left = calculatePosition(item.start, startDate, totalDays);
+  const left = calculatePosition(item.start, rangeStart, totalDays);
   const width = calculateWidth(item.start, item.end, totalDays);
 
   const handleNameEdit = () => {
