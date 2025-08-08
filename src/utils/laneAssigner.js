@@ -1,7 +1,8 @@
 // Assigns timeline items to lanes based on start/end dates
 export function assignLanes(items) {
-  const sortedItems = items.sort((a, b) =>
-      new Date(a.start) - new Date(b.start)
+  // avoid mutating original items
+  const sortedItems = [...items].sort((a, b) =>
+    new Date(a.start) - new Date(b.start)
   );
   const lanes = [];
 
