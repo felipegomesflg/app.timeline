@@ -53,3 +53,69 @@ export function formatMonthLabelPt(date) {
 export function calculateTotalDays(rangeStart, rangeEnd) {
   return (rangeEnd - rangeStart) / (1000 * 60 * 60 * 24);
 }
+
+// Build all 12 months for a given year
+export function buildMonthsForYear(year) {
+  const months = [];
+  for (let m = 0; m < 12; m++) {
+    const start = new Date(year, m, 1);
+    const end = new Date(year, m + 1, 0);
+    months.push({
+      start,
+      end,
+      label: formatMonthLabelPt(start),
+      days: getMonthDays(start),
+    });
+  }
+  return months;
+}
+
+// Build day segments between two dates
+export function buildDaySegements(rangeStart, rangeEnd) {
+  const days = [];
+  const start = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), rangeStart.getDate());
+  const end = new Date(rangeEnd.getFullYear(), rangeEnd.getMonth(), rangeEnd.getDate());
+  const today = new Date();
+  const t = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  let cur = new Date(start);
+  while (cur <= end) {
+    days.push({
+      date: new Date(cur),
+      label: String(cur.getDate()).padStart(2, '0'),
+      isToday: cur.getTime() === t.getTime(),
+    });
+    cur.setDate(cur.getDate() + 1);
+  }
+  return days;
+}
+
+// Find month index for a given date
+export function findMonthIndex(months, date) {
+  const ym = `${date.getFullYear()}-${date.getMonth()}`;
+  return months.findIndex(m => `${m.start.getFullYear()}-${m.start.getMonth()}` === ym);
+}
+
+// Return Monday of the week for a date
+function startOfWeekMonday(date) {
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const day = d.getDay();
+  const diff = (day === 0 ? -6 : 1 - day);
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+
+// Build week segments (Mon..Sun) between range
+export function buildWeekSegments(rangeStart, rangeEnd) {
+  const weeks = [];
+  const start = startOfWeekMonday(rangeStart);
+  const end = new Date(rangeEnd.getFullYear(), rangeEnd.getMonth(), rangeEnd.getDate());
+  let cur = new Date(start);
+  while (cur <= end) {
+    const weekStart = new Date(cur);
+    const weekEnd = new Date(cur);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    weeks.push({ start: weekStart, end: weekEnd });
+    cur.setDate(cur.getDate() + 7);
+  }
+  return weeks;
+}
